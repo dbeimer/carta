@@ -5,7 +5,7 @@ function ShowCardModal() {
   let [show, setShow] = useState(false);
 
   useEffect(() => {
-    const cardModal = document.getElementById('add_card_modal');
+    const cardModal = document.getElementById('modal');
     if (show) {
       cardModal.classList.add('show');
     } else {
