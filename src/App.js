@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 
 import 'bootstrap/dist/css/bootstrap-grid.css';
 
@@ -11,23 +11,35 @@ import {ActivateDarkTheme} from './hooks/ActivateDarkTheme'
 import {Modal} from './Modal'
 import {StudyArea} from './StudyArea'
 
+import {listCards,addCard,removeCard} from './controllers/CardController'
 
 function App() {
     console.log('se ha cargado toda la app');
-    let cardsList = [
-        {front: "front", back: "back"},
-        {front: "front2", back: "back2"},
-        {front: "front3", back: "back3"},
-        {front: "front4", back: "back4"},
-    ]
+    let cardsList = []
 
     const [modalStatus, showModal] = ShowCardModal()
     const [darkTheme, activateDarkTheme] = ActivateDarkTheme()
-    const [cards, setCard] = useState(cardsList)
+    const [cards, setCards] = useState(cardsList)
     const [study, setStudy] = useState(false)
+    
+    useEffect(() => {
+        listCards().then(cards => {
+            setCards(cards)
+        })
+    }, [])
 
     function addNewCard(card) {
-        setCard([...cards, card])
+        addCard(card).then((resultado) => {
+            setCards([...cards, card])
+        })
+    }
+
+    function deleteCard(uid) {
+        removeCard(uid).then((resultado) => {
+            console.log(resultado)
+            let newCards=cards.filter(card => card.uid !== uid)
+            setCards(newCards)
+        })
     }
 
     return (
@@ -43,7 +55,13 @@ function App() {
 
             <ul className='card-list'>
                 {cards.map((card, index) => {
-                    return <li key={index} className='card-list-item'>{card.front}<span className='meaning'>:{card.back}</span></li>
+                    return <li key={card.uid} className='card-list-item d-flex justify-content-between'>
+                        <div>
+                            {card.front}
+                            <span className='meaning'>:{card.back}</span>
+                        </div>
+                        <button onClick={()=>(deleteCard(card.uid))}>x</button>
+                    </li>
                 })}
             </ul>
             <div className='d-flex justify-content-between'>
@@ -61,7 +79,7 @@ function App() {
             {study && <StudyArea showStudy={setStudy} cards={cards} />}
 
         </div>
-              )
+    )
 }
 
 export default App;

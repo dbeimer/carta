@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "./models/Card"
 
 function AddCardModal({showModal, addCard}) {
 
@@ -10,6 +11,10 @@ function AddCardModal({showModal, addCard}) {
 
       front = event.target.front.value;
       back = event.target.back.value;
+
+
+      let card = new Card(front, back);
+      console.log(card);
 
       addCard({front, back});
 
